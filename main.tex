@@ -1,0 +1,294 @@
+\documentclass[12pt]{article}
+\usepackage{hyperref} % hyperlinks
+\usepackage{graphicx} % images
+\usepackage{amsmath} % math (e.g. \begin{align})
+\usepackage{amssymb} % math symbols (e.g. \infty)
+\usepackage{amsthm} % math (theorem environments)
+\usepackage{amsfonts} % math (e.g. \mathbb)
+\usepackage{amscd} % math for commutative diagrams (e.g. \xymatrix)
+\usepackage{mathrsfs} % math for calligraphic letters (e.g. \mathscr)
+\usepackage{mathtools} % math for \DeclarePairedDelimiter
+\usepackage{stmaryrd} % math for \xhookrightarrow
+\usepackage{tikz} % math for \tikz
+\usepackage{./quiver} % quiver diagrams
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{claim}{Claim}
+
+\newcommand{\EL}{\mathcal{EL}\text{++}}
+\newcommand{\ELt}{$\mathcal{EL}$++}
+\newcommand{\concepts}{{\bf C}}
+\newcommand{\individuals}{{\bf A}}
+\newcommand{\roles}{{\bf R}}
+\newcommand{\tuple}[1]{\langle #1 \rangle}
+\newcommand{\set}[1]{\{ #1 \}}
+\newcommand{\abs}[1]{\lvert #1 \rvert}
+\newcommand{\norm}[1]{\lVert #1 \rVert}
+\newcommand{\ontology}{\mathcal{O}}
+\newcommand{\ontologyt}{$\mathcal{O}$}
+\newcommand{\interpetation}{\mathcal{I}}
+\newcommand{\interpetationt}{$\mathcal{I}$}
+\newcommand{\InfSemiLattice}{\text{InfSemiLattice}}
+% Box space - written as Box
+\newcommand{\bspace}{\mathsf{BoxSpace}}
+\newcommand{\bobject}{\mathsf{Box}}
+
+\begin{document}
+\title{Summary of the article}
+\author{Author}
+\date{Date}
+\maketitle
+
+\section{Introduction}
+\label{sec:intro}
+
+
+\section{Preliminaries}
+\label{sec:prelim}
+\subsection{\ELt}
+First we define the description logic \ELt using
+set theory.
+\subsubsection{Syntax}
+\begin{definition}{Signature of \ELt}
+    We define the signature of \ELt as a tuple
+    \begin{align*}
+        \sigma = \tuple{\concepts, \individuals, \roles}
+    \end{align*}
+    where $\concepts$ is a set of concept symbols, $\individuals$ is a set of
+    individual symbols, and $\roles$ is a set of role symbols.
+\end{definition}
+\begin{definition}[Well formed concept]
+    Given a signature $\sigma=\tuple{\concepts, \individuals, \roles}$, a
+    well formed concept is a formula of the form
+    \begin{align*}
+        \varphi ::= \top | \bot | C | \{a\} | \varphi \sqcap \psi | 
+        \exists r.\varphi | \varphi(a) | r(a,b)
+    \end{align*}
+    where $C \in \concepts$, 
+    $a,b \in \individuals$, and $r \in \roles$.
+    We denote the smallest 
+    set of well formed concepts by $\mathcal{C}_\sigma$.
+\end{definition}
+\begin{definition}[Ontology]
+    An ontology \ontologyt is a finite set
+    of concept inclusions $C\sqsubseteq D$
+    where $C,D \in \mathcal{C}_\sigma$. 
+\end{definition}
+
+\subsubsection{Semantics}
+\begin{definition}[Interpretation]
+    Given a signature $\sigma=\tuple{\concepts, \individuals, \roles}$,
+    an interpretation \interpetationt is a tuple
+    \begin{align*}
+        \mathcal{I} = \tuple{\Delta^\mathcal{I}, \cdot^\mathcal{I}}
+    \end{align*}
+    where $\Delta^\mathcal{I}$ is a non-empty set called the domain of
+    $\mathcal{I}$, and $\cdot^\mathcal{I}$ is a function that maps
+    \begin{itemize}
+        \item each $C \in \concepts$ to a subset $C^\mathcal{I}$ of
+            $\Delta^\mathcal{I}$,
+        \item each $a \in \individuals$ to an element $a^\mathcal{I}$ of
+            $\Delta^\mathcal{I}$, and
+        \item each $r \in \roles$ to a binary relation $r^\mathcal{I}$ on
+            $\Delta^\mathcal{I}$.
+    \end{itemize}
+    such that for any $a,b\in\individuals$, $r\in\roles$, and $C,D\in\concepts$,
+    we have that
+    \begin{enumerate}
+        \item $a^\mathcal{I} \in C^\mathcal{I}$ iff $\{a\} \sqsubseteq C$ iff $C(a)$,
+        \item $a^\mathcal{I} \in \{a\}^\mathcal{I}$,
+        \item $a^\mathcal{I} \in (C\sqcap D)^\mathcal{I}$ iff
+            $a^\mathcal{I} \in C^\mathcal{I}$ and $a^\mathcal{I} \in D^\mathcal{I}$,
+        \item $a^\mathcal{I} \in (\exists r.C)^\mathcal{I}$ iff
+            there exists $b\in\individuals$ such that $(a^\mathcal{I}, b^\mathcal{I})\in r^\mathcal{I}$
+            and $b^\mathcal{I} \in C^\mathcal{I}$,
+        \item $(C\sqsubseteq D)^\mathcal{I}$ iff
+            $C^\mathcal{I} \subseteq D^\mathcal{I}$,
+        \item $a^\mathcal{I} \in r^\mathcal{I}(\{b\}^\mathcal{I})$ iff
+            $r^\mathcal{I}(a^\mathcal{I},b^\mathcal{I})$,
+        \item $a^\mathcal{I} \in \top^\mathcal{I}$,
+        \item $a^\mathcal{I} \notin \bot^\mathcal{I}$.
+    \end{enumerate}
+\end{definition}
+\begin{definition}[Satisfiability]
+    Given a signature $\sigma=\tuple{\concepts, \individuals, \roles}$,
+    an interpretation \interpetationt, and a concept $C\in\mathcal{C}_\sigma$,
+    we say that $C$ is satisfiable in \interpetationt if there exists
+    $a\in\individuals$ such that $a^\mathcal{I} \in C^\mathcal{I}$.
+\end{definition}
+\begin{definition}[Entailment]
+    Given a signature $\sigma=\tuple{\concepts, \individuals, \roles}$,
+    an interpretation \interpetationt, and an ontology \ontologyt,
+    we say that \interpetationt satisfies \ontologyt, denoted by
+    $\interpetation \models \ontology$, if for every $C\sqsubseteq D\in\ontology$,
+    we have that $(C\sqsubseteq D)^\mathcal{I}$.
+    We say that \ontologyt is satisfiable if there exists an interpretation
+    \interpetationt such that $\interpetation \models \ontology$.
+\end{definition}
+
+\subsection{Regular categories}
+To provide a framework for \ELt, we need to introduce regular logic.
+First we define regular cateogries.
+
+\begin{definition}[Regular Hyperdoctrine]
+Let $\mathcal{C}$ be a finitely complete category.
+A regular hyperdoctrine is
+a functor
+\begin{align*}
+    P:\mathcal{C}^{\text{op}}\to \InfSemiLattice
+\end{align*}
+such that for any projection $\pi: A\times B\to C \in\mathcal{C}$,
+the morphism $P(\pi)$, which we shall denote $\pi^{-1}$, has a left adjoint $\exists_\pi:P(C)\to P(A)\times P(B)$
+%  and a right adjoint $\forall_\pi:P(C)\to P(A)\times P(B)$
+ .
+Meaning that for any two formulas $\varphi\in P(A)\times P(B),\psi\in P(C)$, we have that
+\begin{gather}
+    \exists_\pi x.\varphi\Rightarrow\psi\text{ if and only if }\varphi\Rightarrow\pi^{-1}(\psi)\label{eq:exists-adj}
+    % \\
+    % \pi^{-1}\varphi\Rightarrow\psi\text{ if and only if }\varphi\Rightarrow\forall_\pi\psi\label{eq:forall-adj}
+\end{gather}
+satisfying the Beck-Chevalley conditions and the Forbenius property.
+\end{definition}
+\begin{remark}
+    Equation \ref*{eq:exists-adj} can be considered as a claim that $\exists_\pi x.\varphi\Rightarrow\psi$ if and only if there exists some $b\in B$
+    such that $\varphi\Rightarrow\psi(b)$.
+    % \\
+    % Equation \ref*{eq:forall-adj} can be considered as a claim that  $\varphi\Rightarrow\forall_\pi\psi$ if and only if for all $b\in B$, $\varphi(b)\Rightarrow\psi$.
+\end{remark}
+
+\begin{definition}[Beck-Chevalley conditions]
+    Given two projections $\pi:A\times B \to A$ and $\pi':C\times B \to C$,
+    the Beck-Chevalley conditions state that for any two morphisms $f:A\times B\to C\times D$ and $g:A\to C$,
+    such that we have a pullback
+    \[\begin{tikzcd}
+        {A\times B} && A \\
+        \\
+        {C\times B} && B
+        \arrow["\pi"{description}, from=1-1, to=1-3]
+        \arrow["g"{description}, from=1-3, to=3-3]
+        \arrow["{\pi'}"{description}, from=3-1, to=3-3]
+        \arrow["f"{description}, from=1-1, to=3-1]
+    \end{tikzcd}\]
+    then $\exists_\pi\circ P(f)=P(g)\circ\exists_{\pi'}$ 
+    % and $\forall_\pi\circ P(f)=P(g)\circ\forall_{\pi'}$
+    .
+\end{definition}
+
+\begin{definition}[Forbenius Condition]
+    Given $\pi:A\times B\to B, \varphi\in P(A),\psi\in P(A)\times P(B)$, the Forbenius condition states that
+    \begin{gather}
+        \exists_\pi x.(\pi^{-1}(\varphi)\land\psi)\simeq \varphi\land\exists_\pi x.\psi
+    \end{gather}
+    This can be read as: there exists $a\in A$
+    such that $ \varphi(a)\land\exists_\pi x.\psi(a,x)$,
+if and only if $\exists_\pi x.(\varphi(a)\land\psi(a,x))$
+\end{definition}
+
+The logic of regular hyperdoctrines is regular logic. It is the $\exists-\land$ fragment
+of first order logic.
+% \begin{remark}
+%     As the image of $P$ is a lattice, $P(f)$ is monotone and so captures the right notion of substitution:
+%     Given morphism $f:A\to B$, objects $\varphi,\psi\in PB$, we have that
+%     \[
+%         \text{if }\varphi\Rightarrow\psi\text{ then }P(f)(\varphi)\Rightarrow P(f)(\psi)
+%     \]
+% \end{remark}
+% \begin{example}[The category of sets]
+%     The category of sets is a regular hyperdoctrine.
+%     The functor $P$ is the powerset functor,
+%     taking a set $A$ to the set of all subsets (equations) of $A$
+%     with the ordering given by inclusion and meets given by intersection.
+%     \par Given a projection $\pi:A\times B\to A$,
+%     we have that
+%     $\pi^{-1}:PA\to PA\times PB$ is a map that takes a subset $S\subseteq A$
+%     to the subset of all pairs $(a,b)\in A\times B$ such that $a\in S$.
+%     If we consider $S$ as a formula $\varphi(a,x)$ then $\pi^{-1}(\varphi(a,x))$ is 
+%     the formula $\varphi(a,x)[b/x]$.
+%     \par Given a morphism $f:A\to B$,
+%     the morphism $P(f)$ represents that
+%     if $\varphi(b)$ and if $a$ is such that $f(a)=b$, then $\varphi(a)$.
+%     Thus we have that
+%     \[
+%         \text{if }\varphi\Rightarrow\psi\text{ then }\varphi(f(a))\Rightarrow\psi(f(a))
+%     \]
+%     \par Given a projection $\pi:(a,b)\to a$,
+%     we have that 
+%     \[
+%         \pi^{-1}:\varphi\to\{(a,b):\varphi(a)\}
+%     \]
+%     is the inverse image of $\varphi$ under $\pi$.
+%     \par The left adjoint of $\pi^{-1}$ is given by
+%     \[
+%         \exists_\pi:\psi\to\{a:\exists b.\psi(a,b)\}
+%     \]
+%     which is the set of all $a$ such that there exists some $b$ such that $\psi(a,b)$.
+    
+%     \par Given a pullback square
+%     \[\begin{tikzcd}
+%         {A\times B} && B \\
+%         \\
+%         {A\times C} && C
+%         \arrow["\pi"{description}, from=1-1, to=1-3]
+%         \arrow["g"{description}, from=1-3, to=3-3]
+%         \arrow["{\pi'}"{description}, from=3-1, to=3-3]
+%         \arrow["f"{description}, from=1-1, to=3-1]
+%     \end{tikzcd}\]
+%     The Beck-Chevalley condition states that for any $\varphi\in P(A\times C)$,
+    
+
+% \end{example}
+
+\section{Main results}
+\label{sec:main}
+
+\begin{definition}[Box space]
+Given $\mathbb{R}^n$, we define a box space $\mathcal{B}$ as a set
+of subsets of the form
+$\{x_i:m_i\leq x_i\leq M_i\}_{\vec{m}}^{\vec{M}}$ that is closed under arbitrary intersections and contains $\mathbb{R}^n$ and $\varnothing$. We would
+denote members as the set as $\bobject(\vec{m},\vec{M}):=\{x_i:m_i\leq x_i\leq M_i\}_{\vec{m}}^{\vec{M}},\bobject(-\infty,\infty),\varnothing$.
+\end{definition}
+We can observe that the subset relation induces a well-ordering of
+$(\mathbb{R}^n,\mathcal{B})$ and that space is bounded, thus box spaces are
+infimum lattices.
+\begin{definition}[Box space morphism]
+    Given two box spaces $(\mathbb{R}^n,\mathcal{B})$ and $(\mathbb{R}^m,\mathcal{B}')$,
+    we define a box space morphism $f:(\mathbb{R}^n,\mathcal{B})\to(\mathbb{R}^m,\mathcal{B}')$ as a function
+    $f:\mathbb{R}^n\to\mathbb{R}^m$ such that for all $\bobject(\vec{m},\vec{M})\in(\mathbb{R}^n,\mathcal{B})$,
+    $f(\bobject(\vec{m},\vec{M}))\in(\mathbb{R}^m,\mathcal{B}')$ and if $\bobject(\vec{m},\vec{M})\subseteq\bobject(\vec{m'},\vec{M'})$
+    then $f(\bobject(\vec{m},\vec{M}))\subseteq f(\bobject(\vec{m'},\vec{M'}))$.
+\end{definition}
+This induces a category $\mathbf{Box}$ of box spaces and box space morphisms.
+\begin{definition}[Product box space]
+    Given two box spaces $(\mathbb{R}^n,\mathcal{B})$ and $(\mathbb{R}^m,\mathcal{B}')$,
+    we define their product box space $\mathcal{B}\times\mathcal{B}'$ as the set of all subsets of the form
+    $\bobject(m\times m',M\times M')=(\bobject(\vec{m},\vec{M}),\bobject(\vec{m'},\vec{M'})):=\{(\vec{x}, \vec{x'}):m_i\leq x_i\leq M_i\land m'_i\leq x'\leq M'_i\}$. 
+\end{definition}
+To see that this is a box space,
+    notice that $\bigcap_j (\bobject(\vec{m},\vec{M}),\bobject(\vec{m'},\vec{M'}))_j=\bigcap_j \bobject(\vec{m},\vec{M})_j \times \bigcap_j \bobject(\vec{m'},\vec{M'})_j$.
+\begin{lemma}
+    The product box space is the product in $\mathbf{Box}$.
+\end{lemma}
+\begin{claim}
+    The map $\exists_\pi:\mathcal{B}\times\mathcal{B}'\to\mathcal{B}$ given by
+    \[
+        \exists_\pi(\bobject(\vec{m},\vec{M}),\bobject(\vec{m'},\vec{M'}))=\{\vec{x}:\exists \vec{x'}\in \bobject(\vec{m'},\vec{M'}):(\vec{x},\vec{x'})
+        \in \bobject(\vec{m}\times \vec{m'},\vec{M}\times \vec{M'})
+        \}
+    \]
+    is a box space morphism and the left adjoint of $\pi^{-1}$.
+\end{claim}
+\end{document}
+
+% predicates and relations are only binary relations
+% existential is exists b.(a,b)\in R and b\in C
+% Add examples of types and of sets
+% Beck-Chevalley condition is essentially that substitution commutes with the and operator
+
+% boxes would not be graphs of affine transformations but rather boxes in higher dimension
+% This is in the sense that they are predicates of higher dimensional
