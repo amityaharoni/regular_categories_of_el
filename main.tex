@@ -12,6 +12,7 @@
 \usepackage{tikz} % math for \tikz
 \usepackage{./quiver} % quiver diagrams
 
+
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{corollary}[theorem]{Corollary}
@@ -81,6 +82,7 @@ set theory.
     where $C,D \in \mathcal{C}_\sigma$. 
 \end{definition}
 
+
 \subsubsection{Semantics}
 \begin{definition}[Interpretation]
     Given a signature $\sigma=\tuple{\concepts, \individuals, \roles}$,
@@ -143,11 +145,11 @@ a functor
 \begin{align*}
     P:\mathcal{C}^{\text{op}}\to \InfSemiLattice
 \end{align*}
-such that for any projection $\pi: A\times B\to C \in\mathcal{C}$,
-the morphism $P(\pi)$, which we shall denote $\pi^{-1}$, has a left adjoint $\exists_\pi:P(C)\to P(A)\times P(B)$
+such that for any morphism $\pi: A\to C \in\mathcal{C}$,
+the morphism $P(\pi)$, which we shall denote $\pi^{-1}$, has a left adjoint $\exists_\pi:P(A)\to P(C)$
 %  and a right adjoint $\forall_\pi:P(C)\to P(A)\times P(B)$
  .
-Meaning that for any two formulas $\varphi\in P(A)\times P(B),\psi\in P(C)$, we have that
+Meaning that for any two formulas $\varphi\in P(A),\psi\in P(C)$, we have that
 \begin{gather}
     \exists_\pi x.\varphi\Rightarrow\psi\text{ if and only if }\varphi\Rightarrow\pi^{-1}(\psi)\label{eq:exists-adj}
     % \\
@@ -156,8 +158,11 @@ Meaning that for any two formulas $\varphi\in P(A)\times P(B),\psi\in P(C)$, we 
 satisfying the Beck-Chevalley conditions and the Forbenius property.
 \end{definition}
 \begin{remark}
-    Equation \ref*{eq:exists-adj} can be considered as a claim that $\exists_\pi x.\varphi\Rightarrow\psi$ if and only if there exists some $b\in B$
-    such that $\varphi\Rightarrow\psi(b)$.
+When we consider products and projections $\pi:A\times B\to C$, the adjoint condition becomes the 
+natural existential quantifier.
+Equation \ref*{eq:exists-adj} can then be considered as a claim that 
+$\exists_\pi x.\varphi\Rightarrow\psi$ if and only if there exists some $b\in B$
+such that $\varphi\Rightarrow\psi(b)$.
     % \\
     % Equation \ref*{eq:forall-adj} can be considered as a claim that  $\varphi\Rightarrow\forall_\pi\psi$ if and only if for all $b\in B$, $\varphi(b)\Rightarrow\psi$.
 \end{remark}
@@ -192,6 +197,18 @@ if and only if $\exists_\pi x.(\varphi(a)\land\psi(a,x))$
 
 The logic of regular hyperdoctrines is regular logic. It is the $\exists-\land$ fragment
 of first order logic.
+% \subsection{Moore Closure}
+% Moore closure
+% make some results nicer.
+% \begin{definition}[Moore closure]
+%     Let $X$ be a set and $\mathcal{L}$ be a set of subsets of $X$.
+%     The Moore closure of $\mathcal{L}$, denoted $\mathcal{L}^*$, 
+%     is the smallest set of subsets of $X$ such that
+%     \begin{enumerate}
+%         \item $\mathcal{L}\subseteq\mathcal{L}^*$.
+%         \item $\mathcal{L}^*$ is closed under arbitrary intersections.
+%     \end{enumerate}
+% \end{definition}
 % \begin{remark}
 %     As the image of $P$ is a lattice, $P(f)$ is monotone and so captures the right notion of substitution:
 %     Given morphism $f:A\to B$, objects $\varphi,\psi\in PB$, we have that
@@ -246,43 +263,357 @@ of first order logic.
 
 \section{Main results}
 \label{sec:main}
-
+\subsection{Box spaces}
+We first construct the box space category.
+A box is a subset of $\mathbb{R}^n$ of the form 
+$\{\vec{x}:m_i\leq x_i\leq M_i\}$ where for any $i$,
+$m_i,M_i\in\mathbb{R}\cup\{-\infty,\infty\}$ and $m_i\leq M_i$.
+Denote sets of that form $\bobject(\vec{m},\vec{M})$.
+Note that $\bobject(-\infty,\infty)=S$
+ and $\bobject(-\infty,-\infty)=\bobject(\infty,\infty)=\varnothing$.
 \begin{definition}[Box space]
-Given $\mathbb{R}^n$, we define a box space $\mathcal{B}$ as a set
-of subsets of the form
-$\{x_i:m_i\leq x_i\leq M_i\}_{\vec{m}}^{\vec{M}}$ that is closed under arbitrary intersections and contains $\mathbb{R}^n$ and $\varnothing$. We would
-denote members as the set as $\bobject(\vec{m},\vec{M}):=\{x_i:m_i\leq x_i\leq M_i\}_{\vec{m}}^{\vec{M}},\bobject(-\infty,\infty),\varnothing$.
+Given $S\subseteq\mathbb{R}^n$, we define a box space $\mathcal{B}$ as a set
+of subsets of $S$ of the form
+$\bobject(\vec{m},\vec{M})$ where
+\begin{itemize}
+    \item $S,\varnothing\in\mathcal{B}$.
+    \item $\mathcal{B}$ is closed under arbitrary intersections.
+\end{itemize}
 \end{definition}
-We can observe that the subset relation induces a well-ordering of
-$(\mathbb{R}^n,\mathcal{B})$ and that space is bounded, thus box spaces are
-infimum lattices.
+% \begin{remark}[Moore closure and the $\bspace$ monads]
+%     We can observe that the subset relation induces a well-ordering of
+% $(\mathbb{R}^n,\mathcal{B})$ and that space is bounded. In fact the box spaces are
+% a closure system on $\mathbb{R}^n$. Meaning that they $\mathcal{B}$
+% are complete lattices.
+% \par In terms of Moore closure, $Cl(A)=\bigcap\{\bobject(m,M):A\subseteq \bobject(m,M)\}$ can be seen as a closure operator 
+% since it is isotone, extensive, and idempotent.
+% Thus box spaces are monads on the subobject lattice $\mathcal{P}(\mathbb{R}^n)$
+% with maps
+% \begin{itemize}
+%     \item $\eta:A\to Cl(A)$
+%     \item $\mu:Cl(Cl(A))\to Cl(A)$
+% \end{itemize}
+% We also observe that the box spaces are not topological spaces since closure systems are 
+% topological spaces only if $Cl(A\cup B)=Cl(A)\cup Cl(B)$.
+% \par Furthermore, we have a map from box spaces to lattices:
+% \[
+% (\mathbb{R}^n,\mathcal{B})\to(\mathcal{B},\cap,\subseteq)   
+% \]
+% \end{remark}
+
+% \begin{remark}[Moore closure]
+%     \par I would like us to cover Moore closures in the meeting if possible.
+%     I hoped that this would generate the morphisms in the category of box space naturally
+%     and thus provide a motivation for defining the box space morphisms.
+%     \par I also hoped that this would provide a notion of proudct.
+% \end{remark}
+Notice that $\mathcal{B}$ is a meet-semilattice under intersections with the subset relation. 
 \begin{definition}[Box space morphism]
-    Given two box spaces $(\mathbb{R}^n,\mathcal{B})$ and $(\mathbb{R}^m,\mathcal{B}')$,
-    we define a box space morphism $f:(\mathbb{R}^n,\mathcal{B})\to(\mathbb{R}^m,\mathcal{B}')$ as a function
-    $f:\mathbb{R}^n\to\mathbb{R}^m$ such that for all $\bobject(\vec{m},\vec{M})\in(\mathbb{R}^n,\mathcal{B})$,
-    $f(\bobject(\vec{m},\vec{M}))\in(\mathbb{R}^m,\mathcal{B}')$ and if $\bobject(\vec{m},\vec{M})\subseteq\bobject(\vec{m'},\vec{M'})$
-    then $f(\bobject(\vec{m},\vec{M}))\subseteq f(\bobject(\vec{m'},\vec{M'}))$.
+    Given two box spaces $(S,\mathcal{B})$ and $(S',\mathcal{B}')$,
+    we define a box space morphism $f:(S,\mathcal{B})\to(S',\mathcal{B}')$ as a function
+    $f:S\to S'$ such that for all $\bobject(\vec{m},\vec{M})\in\mathcal{B}'$,
+    $f^{-1}[\bobject(\vec{m},\vec{M})]\in\mathcal{B}$.
 \end{definition}
+Due to the distributivity of intersection over set inverses, we have that
+\begin{lemma}
+    Every box space morphism 
+    $f:(S,\mathcal{B})\to(S',\mathcal{B}')$ induces a
+    meet-semilattice morphism $f^{-1}:\mathcal{B}'\to\mathcal{B}$.
+\end{lemma}
 This induces a category $\mathbf{Box}$ of box spaces and box space morphisms.
+Furthermore, this induces a forgetful functor $U:\mathbf{Box}^{op}\to\InfSemiLattice$:
+\begin{gather*}
+    U_0:(S,\mathcal{B})\mapsto\mathcal{B}
+    \\
+    U_1:f(\cdot)\mapsto f^{-1}[\cdot]
+\end{gather*}
+We shall show that this induces a hyperdoctrine.
+\subsubsection{Finite completeness} 
+We begin by showing that
+$\mathbf{Box}$ is a finitely complete category.
+We shall show this 
+by proving that $\mathbf{Box}$ admits products and equalizers.
+\par Define the product of two boxes:
+    \begin{gather*}
+        \bobject(\vec{m},\vec{M})\times\bobject(\vec{m'},\vec{M'})=
+        \bobject(\vec{m}\times\vec{m'},\vec{M}\times\vec{M'})
+    \end{gather*}
 \begin{definition}[Product box space]
-    Given two box spaces $(\mathbb{R}^n,\mathcal{B})$ and $(\mathbb{R}^m,\mathcal{B}')$,
-    we define their product box space $\mathcal{B}\times\mathcal{B}'$ as the set of all subsets of the form
-    $\bobject(m\times m',M\times M')=(\bobject(\vec{m},\vec{M}),\bobject(\vec{m'},\vec{M'})):=\{(\vec{x}, \vec{x'}):m_i\leq x_i\leq M_i\land m'_i\leq x'\leq M'_i\}$. 
+    Given two box spaces $(S,\mathcal{B})$ and $(S',\mathcal{B}')$,
+    we define their product box space 
+    $(S\times S',\mathcal{B}\times\mathcal{B}')$ 
+    as the set of all subsets of 
+    the form
+    $\bobject(\vec{m},\vec{M})\times\bobject(\vec{m'},\vec{M'})$
+    with $\bobject(\vec{m},\vec{M})\in\mathcal{B}$ 
+    and 
+    $\bobject(\vec{m'},\vec{M'})\in \mathcal{B}'$.
 \end{definition}
-To see that this is a box space,
-    notice that $\bigcap_j (\bobject(\vec{m},\vec{M}),\bobject(\vec{m'},\vec{M'}))_j=\bigcap_j \bobject(\vec{m},\vec{M})_j \times \bigcap_j \bobject(\vec{m'},\vec{M'})_j$.
 \begin{lemma}
     The product box space is the product in $\mathbf{Box}$.
+    \begin{proof}
+        As every
+        box morphism is also a function of the underlying sets,
+        it suffcies to show that the
+        projections $\pi_{S},\pi'_{S'}$
+        and the unique morphisms
+        are box morphisms.
+        \par Given two box spaces $(S,\mathcal{B})$ and $(S',\mathcal{B}')$,
+        and $\bobject(\vec{m},\vec{M})\in(\mathbb{R}^n,\mathcal{B})$, notice that
+        $\pi^{-1}[\bobject(\vec{m},\vec{M})]=\bobject(\vec{m},\vec{M})\times\bobject(-\infty,\infty)\in\mathcal{B}\times\mathcal{B}'$.
+        Thus the projections are box morphisms.
+        \par Given a box space $(A,\mathcal{S})$
+        and two morphisms $f:(A,\mathcal{S})\to(S,\mathcal{B})$
+        and $g:(A,\mathcal{S})\to(S',\mathcal{B}')$,
+        the unique map of sets $f\times g:x\to(f(x),g(x))$ that commutes with the projections is also a box morphism.
+        This is because 
+        \begin{gather*}
+            f\times g^{-1}[\bobject(\vec{m},\vec{M})\times\bobject(\vec{m'},\vec{M'})]=
+            f^{-1}[\bobject(\vec{m},\vec{M})]\cap g^{-1}[\bobject(\vec{m'},\vec{M'})]
+        \end{gather*}
+        As $f$ and $g$ are box morphisms, the preimages are in the box space $(\mathbb{R}^s,\mathcal{S})$.
+        As box spaces are closed under intersection, $f^{-1}[\bobject(\vec{m},\vec{M})]\cap g^{-1}[\bobject(\vec{m'},\vec{M'})]$
+        is in the box space. Thus, $f\times g$ is a box morphism.
+    \end{proof}
 \end{lemma}
-\begin{claim}
-    The map $\exists_\pi:\mathcal{B}\times\mathcal{B}'\to\mathcal{B}$ given by
-    \[
-        \exists_\pi(\bobject(\vec{m},\vec{M}),\bobject(\vec{m'},\vec{M'}))=\{\vec{x}:\exists \vec{x'}\in \bobject(\vec{m'},\vec{M'}):(\vec{x},\vec{x'})
-        \in \bobject(\vec{m}\times \vec{m'},\vec{M}\times \vec{M'})
+Next we define the equalizer of two box space morphisms. First, we define a box subspace
+and then we shall show that it is the equalizer.
+\begin{definition}[Box subspace]
+    Given a box space $(S,\mathcal{B})$ and a subset $A\subseteq S$,
+    we define the box subsapce $(A,\mathcal{B}_A)$ as the set of all subsets of $A$
+    of the form $\bobject(\vec{m},\vec{M})\cap A$ where $\bobject(\vec{m},\vec{M})\in\mathcal{B}$.
+\end{definition}
+Notice that this is a valid box space since it is closed under arbitrary intersections by the 
+closure of $\mathcal{B}$. Furthermore, the inclusion $i:(A,\mathcal{B}_A)\to(S,\mathcal{B})$
+is a box morphism.
+\begin{definition}[Equalizer box space]
+    Given two box spaces $(S,\mathcal{B})$ and $(S',\mathcal{B}')$,
+    and two box space morphisms $f,g:(S,\mathcal{B})\to(S',\mathcal{B}')$,
+    we define their equalizer box space
+    $i:(E,\mathcal{B}_E)\to(S,\mathcal{B})$ as the set $\{\vec{x}:f(x)=g(x)\}$ with the inclusion
+    map and the box subspace.
+\end{definition}
+\begin{lemma}
+    The equalizer box space is the equalizer in $\mathbf{Box}$
+    \begin{proof}
+        Let $(A,\mathcal{S})$ be a box space with a morphism $j:(A,\mathcal{S})\to(S,\mathcal{B})$
+        such that $fj=gj$. As $E$ is the equalizer in $\mathbf{Set}$, 
+        it suffices to show that the unique map
+        $j\restriction_E$ is a box morphism. Given a box $\bobject(\vec{m},\vec{M})$ in $\mathcal{B}_E$, we know that
+        $\bobject(\vec{m},\vec{M})=\bobject(\vec{m'},\vec{M'})\cap S$ with $\bobject(\vec{m'},\vec{M'})\in\mathcal{S}$.
+        As preimages commute with the intersection
+        \begin{gather*}
+            j\restriction_E^{-1}[\bobject(\vec{m},\vec{M})]=j^{-1}[\bobject(\vec{m'},\vec{M'})\cap S]=
+            j^{-1}[\bobject(\vec{m'},\vec{M'})]\cap j^{-1}[S]=j^{-1}[\bobject(\vec{m'},\vec{M'})]
+        \end{gather*}
+        with the right hand side being a box in $\mathcal{S}$ because $j$ is a box morphism.
+        Thus $j\restriction_E$ is a box morphism.
+    \end{proof}
+\end{lemma}
+Lastly, note that $(0,\{0,\varnothing\})$ is a terminal object in $\mathbf{Box}$. Since we
+showed that the category has binary products, equalizers and a terminal object, we showed that
+\begin{theorem}
+    $\mathbf{Box}$ is a finitely complete category.
+\end{theorem}
+\subsubsection{Left adjoint} 
+% \begin{claim}
+%     The map $\exists_\pi:\mathcal{B}\times\mathcal{B}'\to\mathcal{B}$ given by
+%     \[
+%         \exists_\pi(\bobject(\vec{m},\vec{M}),\bobject(\vec{m'},\vec{M'}))=\{\vec{x}:\exists \vec{x'}\in \bobject(\vec{m'},\vec{M'}):(\vec{x},\vec{x'})
+%         \in \bobject(\vec{m}\times \vec{m'},\vec{M}\times \vec{M'})
+%         \}
+%     \]
+%     is a box space morphism and the left adjoint of $\pi^{-1}$.
+% \end{claim}
+To define the existential object, it suffices to show that $\mathbf{Box}$
+has a closure operator.
+\begin{definition}[Closure operator]
+    Given a box space $(S,\mathcal{B})$, we define
+    \begin{align*}
+        Cl:\mathcal{P}(S)&\to\mathcal{B}
+        \\
+        A&\mapsto\bigcap\{\bobject(\vec{m},\vec{M}):A\subseteq\bobject(\vec{m},\vec{M})\}
+    \end{align*}
+\end{definition}
+We notice that the closure operator satisfies the closure conditions: for any $A\subseteq S$, we have that
+\begin{enumerate}
+    \item[(Extensivity)] $A\subseteq Cl(A)$.
+    \item[(Isotonicity)] $A\subseteq B$ implies $Cl(A)\subseteq Cl(B)$.
+    \item[(Idempotency)] $Cl(Cl(A))\subseteq Cl(A)$.
+\end{enumerate}
+Furthermore, for any box $\bobject(\vec{m},\vec{M})\in\mathcal{B}$, we have that
+$Cl(\bobject(\vec{m},\vec{M}))=\bobject(\vec{m},\vec{M})$.
+\begin{definition}[Existential object]
+    We define the existential operator as:
+    \begin{align*}
+        \exists_{(\cdot)}:\mathbf{Box}((S,\mathcal{B}),(S',\mathcal{B}'))&\to\InfSemiLattice(\mathcal{B},\mathcal{B}')
+        \\
+        f(\cdot)&\mapsto Cl\circ f[\cdot]
+    \end{align*}
+    To see that this is a box morphism, notice that for any $\bobject(\vec{m},\vec{M})\in\mathcal{B}'$,
+    \begin{gather*}
+        (Cl\circ f)^{-1}[\bobject(\vec{m},\vec{M})]=f^{-1}\circ Cl^{-1}(\bobject(\vec{m},\vec{M}))=
+        f^{-1}\left[\bigcup \{A\subseteq S':Cl(A)=\bobject(\vec{m},\vec{M})\}\right]
+    \end{gather*}
+    Notice that $Cl(\bobject(\vec{m},\vec{M}))=\bobject(\vec{m},\vec{M})$ and in fact
+    it is the supremum of the set in the left. Thus
+    \begin{gather*}
+        =f^{-1}[\bobject(\vec{m},\vec{M})]
+    \end{gather*}
+    which is a box by the fact the $f$ is a box morphism.
+\end{definition}
+\begin{lemma}
+    For any morphism $\pi:(S,\mathcal{B})\to(S',\mathcal{B}')$,
+    the existential operator $\exists_\pi$ is the left adjoint of $\pi^{-1}$ in $\InfSemiLattice$.
+    \begin{proof}
+        We shall show that for any $\bobject(\vec{m},\vec{M})\in\mathcal{B}$ and $\bobject(\vec{m'},\vec{M'})\in\mathcal{B}'$,
+        \begin{gather*}
+            \exists_\pi[\bobject(\vec{m},\vec{M})]\subseteq \bobject(\vec{m'},\vec{M'})\text{ if and only if }
+            \bobject(\vec{m},\vec{M})\subseteq \pi^{-1}[\bobject(\vec{m'},\vec{M'})]
+        \end{gather*}
+        \par $\Rightarrow$ Suppose that $Cl\circ \pi[\bobject(\vec{m},\vec{M})]=\exists_\pi[\bobject(\vec{m},\vec{M})]\subseteq \bobject(\vec{m'},\vec{M'})$.
+        Let $\vec{x}\in\bobject(\vec{m},\vec{M})$.
+        Then by extensivity $\pi(\vec{x})\in\pi[\bobject(\vec{m},\vec{M})]\subseteq Cl\circ \pi[\bobject(\vec{m},\vec{M})]$.
+        Hence $\pi(\vec{x})\in\bobject(\vec{m'},\vec{M'})$. Thus $\vec{x}\in\pi^{-1}[\bobject(\vec{m'},\vec{M'})]$.
+        \par $\Leftarrow$ Suppose that $\bobject(\vec{m},\vec{M})\subseteq \pi^{-1}[\bobject(\vec{m'},\vec{M'})]$.
+        Then $\pi[\bobject(\vec{m},\vec{M})]\subseteq\bobject(\vec{m'},\vec{M'})$.
+        By isotonicity $Cl(\pi[\bobject(\vec{m},\vec{M})])\subseteq Cl(\bobject(\vec{m'},\vec{M'}))=\bobject(\vec{m'},\vec{M'})$.
+    \end{proof}
+\end{lemma}
+\begin{remark}
+    Given a product box space and a projection $\pi:(S\times S',\mathcal{B}\times\mathcal{B}')\to(S,\mathcal{B})$,
+    we have in particular that
+    \begin{gather*}
+        \exists_\pi(\bobject(\vec{m},\vec{M})\times\bobject(\vec{m'},\vec{M'}))=
+        \{\vec{x}:\exists \vec{x'}\in \bobject(\vec{m'},\vec{M'}):(\vec{x},\vec{x'})
+        \in \bobject(\vec{m},\vec{M})\times\bobject(\vec{m'},\vec{M'})
         \}
-    \]
-    is a box space morphism and the left adjoint of $\pi^{-1}$.
-\end{claim}
+    \end{gather*}
+\end{remark}
+We need to show
+that the existential operator satisfies the Beck-Chevalley
+and the Forbenius conditions.
+First, note that
+\begin{lemma}[Characterization of the pullback]\label{lem:box-pullback}
+    Given any two arrows $f:(A,\mathcal{A})\to(C,\mathcal{C})$
+    and $g:(B,\mathcal{B})\to(C,\mathcal{C})$ in the category $\mathbf{Box}$,
+    the pullback is of the form
+    $(A\times_{f,g} B,\mathcal{A\times B}_{A\times_{f,g} B})$. Meaning that 
+    the underlying set is the pullback set in $\mathbf{Set}$
+    and the box space is the box subspace of the product box space induced
+    by the underlying set.
+\end{lemma}
+\begin{lemma}
+    Suppose that $f:(A,\mathcal{A})\to(B,\mathcal{B})$ is a
+    box morphism. Then $Cl\circ f^{-1}=f^{-1}\circ Cl$.
+    \begin{proof}
+        \par Consider some subset $S$.
+        If $\vec{x}\in Cl\circ f^{-1}[S]$,
+        then for any box $\bobject(\vec{m},\vec{M})$, if
+        $f^{-1}[S]\subseteq \bobject(\vec{m},\vec{M})$, then
+        $\vec{x}\in \bobject(\vec{m},\vec{M})$.
+        \par Suppose that $\vec{x}\notin f^{-1}\circ Cl(S)$.
+        Then $f(\vec{x})\notin Cl(S)$.
+        Meaning that there exists some $\bobject(\vec{m'},\vec{M'})$ 
+        such that $S\subseteq \bobject(\vec{m'},\vec{M'})$, but
+        $f(\vec{x})\notin \bobject(\vec{m'},\vec{M'})$.
+        In particular, this implies that
+        $\vec{x}\notin f^{-1}[\bobject(\vec{m'},\vec{M'})]$ and
+        $f^{-1}[S]\subseteq f^{-1}[\bobject(\vec{m'},\vec{M'})]$.
+        However, as $f$ is a box morphism, $f^{-1}[\bobject(\vec{m'},\vec{M'})]$
+        is a box. This is a contradiction. Thus
+        $Cl\circ f^{-1}[S]\subseteq f^{-1}\circ Cl$.
+        \par Suppose that $\vec{x}\in f^{-1}\circ Cl(S)$.
+        Then $f(\vec{x})\in Cl(S)$. Consider a box $\bobject(\vec{m},\vec{M})$
+        such that $f^{-1}[S]\subseteq \bobject(\vec{m},\vec{M})$. If
+        $x\notin \bobject(\vec{m},\vec{M})$, then 
+        $g$
+    \end{proof}
+\end{lemma}
+\begin{lemma}
+    For any pullback diagram
+    \[\begin{tikzcd}
+        {(A\times B_{\pi',g},\mathcal{A}\times B_{A\times B_{\pi',g}})} && {(B,\mathcal{B})} \\
+        \\
+        {(A,\mathcal{A})} && {(C,\mathcal{C})}
+        \arrow["\pi"{description}, from=1-1, to=1-3]
+        \arrow["g"{description}, from=1-3, to=3-3]
+        \arrow["f"{description}, from=1-1, to=3-1]
+        \arrow["{\pi'}"{description}, from=3-1, to=3-3]
+    \end{tikzcd}\]
+    in $\mathbf{Box}$, the Beck-Chevalley condition holds.
+    \begin{gather*}
+        \exists_\pi\circ f^{-1}=g^{-1}\circ\exists_{\pi'}
+    \end{gather*}
+    \begin{proof}
+        By lemma \ref{lem:box-pullback}, we have that $f,\pi$ are projections.
+        Thus
+        \begin{gather*}
+            \exists_\pi\circ f^{-1}[\bobject(\vec{m},\vec{M})]=
+            \exists_\pi(\{(\vec{a},\vec{b})\mid g(\vec{b})\in \pi'[\bobject(\vec{m},\vec{M})]\})=
+            \\
+            Cl(\pi[\{(\vec{a},\vec{b})\mid g(\vec{b})\in \pi'[\bobject(\vec{m},\vec{M})]\}])
+            =
+            Cl(\{\vec{b}\mid g(\vec{b})\in \pi'[\bobject(\vec{m},\vec{M})]\})=
+            \\
+            Cl(g^{-1}[\pi'[\bobject(\vec{m},\vec{M})]])
+        \end{gather*}
+        As $g$ is a box morphism,
+        Let $\bobject(\vec{m},\vec{M})\in\mathcal{A}$.
+        As $\exists_\pi$ is a left adjoint, to show that
+        \begin{gather*}
+            \exists_\pi\circ f^{-1}[\bobject(\vec{m},\vec{M})]
+            \subseteq
+            g^{-1}\circ\exists_{\pi'}[\bobject(\vec{m},\vec{M})]
+        %     =
+        % Cl(\pi\circ f^{-1}[\bobject(\vec{m},\vec{M})])=
+        % Cl(\{\pi(\vec{x}):f(x)\in\bobject(\vec{m},\vec{M})\})
+        \end{gather*}
+        It suffices to show that
+        \begin{gather*}
+            f^{-1}[\bobject(\vec{m},\vec{M})]
+            \subseteq
+            \pi^{-1}\circ g^{-1}\circ\exists_{\pi'}[\bobject(\vec{m},\vec{M})]=(g\circ\pi)^{-1}\circ\exists_{\pi'}[\bobject(\vec{m},\vec{M})]
+        \end{gather*}
+        By the pullback property, it suffices to show that
+        \begin{gather*}
+            f^{-1}[\bobject(\vec{m},\vec{M})]
+            \subseteq
+            (\pi'\circ f)^{-1}\circ\exists_{\pi'}[\bobject(\vec{m},\vec{M})]=
+            f^{-1}\circ\pi'^{-1}\circ\exists_{\pi'}[\bobject(\vec{m},\vec{M})]
+        \end{gather*}
+        As we showed that $\exists_{\pi'}$ is a left adjoint to $\pi'^{-1}$, 
+        we have that $\pi'^{-1}\circ\exists_{\pi'}=Id$. Hence, we need to show that
+        \begin{gather*}
+            f^{-1}[\bobject(\vec{m},\vec{M})]
+            \subseteq
+            f^{-1}[\bobject(\vec{m},\vec{M})]
+        \end{gather*}
+        which is trivialy true.
+        \par Next we need to show that
+        \begin{gather*}
+            g^{-1}\circ\exists_{\pi'}[\bobject(\vec{m},\vec{M})]
+            \subseteq
+            \exists_\pi\circ f^{-1}[\bobject(\vec{m},\vec{M})]            
+        \end{gather*}
+        Consider $\vec{x}\in g^{-1}\circ\exists_{\pi'}[\bobject(\vec{m},\vec{M})]$.
+        Meaning that $g(\vec{x})\in\exists_{\pi'}[\bobject(\vec{m},\vec{M})]$.
+        Hence, for every $\bobject(\vec{m'},\vec{M'})$
+        such that $\pi'[\bobject(\vec{m},\vec{M})]\subseteq\bobject(\vec{m'},\vec{M'})$,
+        we have that $g(\vec{x})\in \bobject(\vec{m'},\vec{M'})$.
+        \par Suppose that $\vec{x}\notin\exists_\pi\circ f^{-1}[\bobject(\vec{m},\vec{M})]$.
+        Then there exists some $\bobject(\vec{m'},\vec{M'})\in\mathcal{B}$
+        such that $\pi\circ f^{-1}[\bobject(\vec{m},\vec{M})]\subseteq \bobject(\vec{m'},\vec{M'})$,
+        but $\vec{x}\notin\bobject(\vec{m'},\vec{M'})$.
+        By lemma \ref{lem:box-pullback}, we have that
+        $f$ and $\pi$ are projections.
+        Rewriting, we have that
+        \begin{gather*}
+            \pi\circ f^{-1}[\bobject(\vec{m},\vec{M})]=
+            \{\vec{b}:g(\vec{b})=\pi'[\bobject(\vec{m},\vec{M})]\}
+        \end{gather*}
+    \end{proof}
+\end{lemma}
 \end{document}
 
 % predicates and relations are only binary relations
